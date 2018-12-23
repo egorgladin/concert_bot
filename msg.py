@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 def greet():
 	return ("Привет! Напишите город из списка, в котором вы хотели бы пойти на концерт "
             "группы \"некондиция\": Москва, Санкт-Петербург, Екатеринбург, Нижний Новгород.")
 
 def message(text):
+	text = text.lower()
 	first_msg = False
 	has_attachment = False
 	answers = {}
@@ -38,6 +40,7 @@ def message(text):
                   "Если хотите узнать о концерте в другом городе, "
                   "напишите его название. Если хотите закончить "
                   "сессию, напишите \"пока\"")))
+	#append_here
 				  
 	if text in answers:
 		has_attachment = True
