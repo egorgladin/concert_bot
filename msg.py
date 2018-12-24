@@ -1,75 +1,60 @@
 # -*- coding: utf-8 -*-
 def greet():
-	return ("Привет! Напишите город из списка, в котором вы хотели бы пойти на концерт "
-            "группы \"некондиция\": Москва, Санкт-Петербург, Екатеринбург, Нижний Новгород.")
+    import pickle
+    with open('cities.pickle', 'rb') as f:
+        cities = pickle.load(f)
+    text = "Привет! Напишите город из списка, в котором вы хотели бы пойти на концерт группы \"некондиция\":"
+    for i in range(len(cities)):
+        text = text + ' ' + cities[i]
+        if i < len(cities) - 1:
+            text = text + ','
+        else:
+            text = text + '.'
+    return text
 
+    
 def message(text):
-	text = text.lower()
-	first_msg = False
-	has_attachment = False
-	answers = {}
-	answers = dict.fromkeys(['москва', 'мск'],
-                 ("Концерт \"некондиции\" в Москве пройдёт 7 января в клубе Punk Fiction. "
-                  "Адрес клуба: м. Бауманская/Красносельская, ул. Ольховская, 14с1. "
-                  "Билеты можно приобрести в кассе клуба по цене 400р. "
-                  "Начало концерта в 19:00. \n"
-                  "Если хотите узнать о концерте в другом городе, "
-                  "напишите его название. Если хотите закончить "
-                  "сессию, напишите \"пока\""))
-	answers.update(dict.fromkeys(['санкт-петербург', 'питер', 'спб', 'петербург'],
-                 ("Концерт \"некондиции\" в Питере пройдёт 8 января в клубе Zoccolo 2.0. "
-                  "Адрес клуба: м. Площадь Восстания, Лиговский пр-т, 50к3 "
-                  "Билеты можно приобрести в кассе клуба по цене 350р. "
-                  "Начало концерта в 18:00. \n"
-                  "Если хотите узнать о концерте в другом городе, "
-                  "напишите его название. Если хотите закончить "
-                  "сессию, напишите \"пока\"")))
-	answers.update(dict.fromkeys(['екатеринбург', 'екб'],
-                 ("Концерт \"некондиции\" в Екатеринбурге пройдёт 9 января в клубе Свобода. "
-                  "Адрес клуба: пер. Центральный рынок, 6 "
-                  "Билеты можно приобрести в кассе клуба по цене 300р. "
-                  "Начало концерта в 18:30. \n"
-                  "Если хотите узнать о концерте в другом городе, "
-                  "напишите его название. Если хотите закончить "
-                  "сессию, напишите \"пока\"")))
-	answers.update(dict.fromkeys(['нижний новгород', 'нижний', 'нн'],
-                 ("Концерт \"некондиции\" в Нижнем Новгороде пройдёт 10 января в клубе Crazy Train. "
-                  "Адрес клуба: ул. Почаинская, 17с "
-                  "Билеты можно приобрести в кассе клуба по цене 250р. "
-                  "Начало концерта в 19:00. \n"
-                  "Если хотите узнать о концерте в другом городе, "
-                  "напишите его название. Если хотите закончить "
-                  "сессию, напишите \"пока\"")))
-	#append_here
-				  
-	if text in answers:
-		has_attachment = True
-		
-	if text[:4] == 'пока' \
-	or text[:7] == 'до свид' \
-	or text[:6] == 'досвид' \
-	or text[:3] == 'бай' \
-	or text[:6] == 'прощай':
-		text = 'пока'
-		first_msg = True
-        
-	answers['пока'] = "Увидимся на концертах!"
+    import pickle
+    text = text.lower()
+    first_msg = False
+    has_attachment = False
 
-	return first_msg, has_attachment, answers.get(
-          text,
-          ("Боюсь, я вас не понял. Если вы хотите узнать о концерте группы \"некондиция\", "
-           "отправьте сообщение, которое содержит только название одного из городов тура: "
-           "Москва, Санкт-Петербург, Екатеринбург или Нижний Новгород. "
-           "Если хотите закончить сессию, напишите \"пока\""))
-		   
+    with open('concert.pickle', 'rb') as f:
+        answers = pickle.load(f)
+    if text in answers:
+        has_attachment = True
+        
+    if text[:4] == 'пока' \
+    or text[:7] == 'до свид' \
+    or text[:6] == 'досвид' \
+    or text[:3] == 'бай' \
+    or text[:6] == 'прощай':
+        text = 'пока'
+        first_msg = True
+        
+    answers['пока'] = "Увидимся на концертах!"
+    
+    response = "Боюсь, я вас не понял."
+    if text not in answers:
+        with open('cities.pickle', 'rb') as f:
+            cities = pickle.load(f)
+        response = response + (" Если вы хотите узнать о концерте группы \"некондиция\", "
+                    "отправьте сообщение, которое содержит только название одного из городов тура:")
+        for i in range(len(cities)):
+            response = response + ' ' + cities[i]
+            if i < len(cities) - 1:
+                response = response + ','
+            else:
+                response = response + '.'
+        response = response + " Если хотите закончить сессию, напишите \"пока\"."
+    
+            
+    return first_msg, has_attachment, answers.get(text, response)
+
+
 def attachment_photo(city):
-	attachments = {}
-	attachments = dict.fromkeys(['москва', 'мск'], 'photo-175556159_456239021')
-	attachments.update(dict.fromkeys(['санкт-петербург', 'питер', 'спб', 'петербург'],
-                'photo-175556159_456239024'))
-	attachments.update(dict.fromkeys(['екатеринбург', 'екб'],
-                'photo-175556159_456239020'))
-	attachments.update(dict.fromkeys(['нижний новгород', 'нижний', 'нн'],
-                'photo-175556159_456239019'))
-	return attachments.get(city, 'photo-175556159_456239023')
-	
+    import pickle
+    with open('photos.pickle', 'rb') as f:
+        attachments = pickle.load(f)
+    default_photo = 'photo-175556159_456239023'
+    return attachments.get(city, default_photo)
